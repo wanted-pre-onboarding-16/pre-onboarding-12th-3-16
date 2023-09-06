@@ -19,17 +19,15 @@ export function DisplayProvider({ children }: Prop) {
 
   useEffect(() => {
     if (!targetRef.current) return;
+    const copyRef = targetRef.current;
     const onFocus = () => setIsFocused(true);
     const onBlur = () => setIsFocused(false);
-    if (isFocused) {
-      targetRef.current?.focus();
-    }
-    targetRef.current?.addEventListener('focus', onFocus);
-    targetRef.current?.addEventListener('blur', onBlur);
 
+    copyRef?.addEventListener('focus', onFocus);
+    copyRef?.addEventListener('blur', onBlur);
     return () => {
-      targetRef.current?.removeEventListener('focus', onFocus);
-      targetRef.current?.removeEventListener('blur', onBlur);
+      copyRef?.removeEventListener('focus', onFocus);
+      copyRef?.removeEventListener('blur', onBlur);
     };
   }, [isFocused]);
 
