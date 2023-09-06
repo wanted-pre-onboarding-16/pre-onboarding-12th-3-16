@@ -33,19 +33,15 @@ function List() {
     };
 
     if (display?.isFocused) {
-      console.log('add');
-
       window.addEventListener('keyup', moveList);
     } else {
-      console.log('remove');
       window.removeEventListener('keyup', moveList);
     }
-
     return () => {
       window.removeEventListener('keyup', moveList);
     };
   }, [data?.length, display?.isFocused]);
-  console.log(isOnIndex, data?.length);
+
   return (
     display?.isFocused && (
       <ul>
