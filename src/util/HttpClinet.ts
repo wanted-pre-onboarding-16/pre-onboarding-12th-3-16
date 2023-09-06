@@ -1,6 +1,10 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
-class HttpClient {
+export interface THttpClient {
+  get: (query: string) => Promise<AxiosResponse>;
+}
+
+class HttpClient implements THttpClient {
   #baseUrl: string;
   constructor(baseUrl: string) {
     this.#baseUrl = baseUrl;
