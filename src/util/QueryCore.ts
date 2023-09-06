@@ -13,8 +13,8 @@ class QueryCore {
   constructor() {
     this.getHttpRequest = httpClient;
     this.#baseQuery = '/sick?q=';
-    this.#deleteCacheTime = 2;
-    this.#staleCacheTime = 1;
+    this.#deleteCacheTime = 60;
+    this.#staleCacheTime = 10;
     this.#millisecond = 60 * 1000;
     this.#cacheTime = 'Cache Time';
     this.#diseaseCache = 'Disease Cache';
@@ -75,7 +75,6 @@ class QueryCore {
   // 삭제할 스테일 등록
   async addCacheTime(inputText: string, response: AxiosResponse) {
     const deleteCacheTime = Date.now() + this.#deleteCacheTime * this.#millisecond;
-    console.log(deleteCacheTime);
     const cacheTime = new Response(JSON.stringify(deleteCacheTime), {
       status: response.status,
       statusText: response.statusText,
