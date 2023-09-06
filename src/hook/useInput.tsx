@@ -1,5 +1,6 @@
 import { useChangeDiseasStore } from '../context/DiseaseStoreContext';
 import { httpClient } from '../util/HttpClinet';
+import { query } from '../util/QueryCore';
 
 function useInput() {
   const updateDisease = useChangeDiseasStore()?.updateDiseaStore;
@@ -10,29 +11,22 @@ function useInput() {
     if (Timer) clearTimeout(Timer);
     Timer = setTimeout(async () => {
       if (inputText.trim()) {
-        const cachesHit = await caches
-          .open('Disease Cache')
-          .then(cache => cache.match('/sick?q=' + inputText));
-        if (!cachesHit) {
-          const response = await httpClient.get(inputText);
-
-          const convertAxiosResponseToFatch = new Response(JSON.stringify(response.data), {
-            status: response.status,
-            statusText: response.statusText,
-          });
-          await caches
-            .open('Disease Cache')
-            .then(cache => cache.put('/sick?q=' + inputText, convertAxiosResponseToFatch));
-          updateDisease(response.data);
+        const isCaching = await query.cacheHit(inputText);
+        const staleTime = await query.cacheStale(inputText);
+        if (isCaching) {
+          if (staleTime <= Date.now()) {
+            const result = await query.reRequest(inputText);
+            updateDisease(result);
+          } else {
+            updateDisease(isCaching);
+          }
         } else {
-          await caches.open('Disease Cache').then(
-            async cache =>
-              await cache.match('/sick?q=' + inputText).then(result => {
-                if (result) {
-                  result.json().then(result => updateDisease(result));
-                }
-              }),
-          );
+          const response = await httpClient.get(inputText);
+          if (response.data.length === 0) return updateDisease([]);
+          await query.addCache(inputText, response);
+          await query.addStale(inputText, response);
+          await query.addCacheTime(inputText, response);
+          updateDisease(response.data);
         }
       } else {
         updateDisease([]);
