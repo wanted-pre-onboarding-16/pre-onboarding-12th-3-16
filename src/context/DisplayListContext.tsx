@@ -22,9 +22,7 @@ export function DisplayProvider({ children }: Prop) {
     const copyRef = targetRef.current;
     const onFocus = () => setIsFocused(true);
     const onBlur = () => setIsFocused(false);
-    if (isFocused) {
-      targetRef.current?.focus();
-    }
+
     copyRef?.addEventListener('focus', onFocus);
     copyRef?.addEventListener('blur', onBlur);
     return () => {
