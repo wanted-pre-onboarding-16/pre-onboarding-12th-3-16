@@ -4,10 +4,10 @@ import useInput from '../hook/useInput';
 function Input() {
   const targetRef = useDisplay()?.targetRef;
 
-  const { onChangeValue } = useInput();
+  const onChangeValue = useInput()?.onChangeValue;
 
   const ApiTrigger = () => {
-    if (targetRef?.current) onChangeValue(targetRef?.current.value);
+    if (targetRef?.current && onChangeValue) onChangeValue(targetRef?.current.value);
   };
 
   return (
