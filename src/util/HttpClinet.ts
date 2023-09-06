@@ -7,6 +7,7 @@ class HttpClient {
   }
 
   get(query: string) {
+    console.info('calling api');
     return axios.get(`${this.#baseUrl}${query}`);
   }
 }
