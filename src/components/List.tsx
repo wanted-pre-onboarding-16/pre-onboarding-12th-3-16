@@ -1,46 +1,64 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useDiseasStore } from '../context/DiseaseStoreContext';
 import { useDisplay } from '../context/DisplayListContext';
 import ListItem from './ListItem';
 
+let lastKeyPressedTime = 0;
+
 function List() {
   const display = useDisplay();
   const data = useDiseasStore();
-  const [isOnIndex, setIsOnIndex] = useState(-2);
-  useEffect(() => {
-    const moveList = (e: KeyboardEvent) => {
-      e.stopPropagation();
+  const [isOnIndex, setIsOnIndex] = useState(0);
 
-      switch (e.code) {
-        case 'ArrowUp':
-          setIsOnIndex(pre => {
-            if (pre <= 0) return (pre = 0);
-            else pre -= 1;
-            return pre;
-          });
-          break;
-        case 'ArrowDown':
-          setIsOnIndex(pre => {
-            if (!data?.length) return pre;
-            if (pre === data?.length - 1) return pre;
-            else pre += 1;
-            return pre;
-          });
-          break;
-        default:
-          return;
+  const handleMoveList = useCallback(
+    (e: KeyboardEvent) => {
+      const now = Date.now();
+
+      if (now - lastKeyPressedTime < 100) {
+        return;
       }
-    };
 
+      lastKeyPressedTime = now;
+
+      if (!['ArrowUp', 'ArrowDown'].includes(e.code)) return;
+
+      e.stopPropagation();
+      e.preventDefault();
+
+      setIsOnIndex(prev => {
+        if (e.code === 'ArrowUp') {
+          return Math.max(prev - 1, 0);
+        }
+
+        if (e.code === 'ArrowDown' && data?.length) {
+          return Math.min(prev + 1, data.length - 1);
+        }
+
+        return prev;
+      });
+    },
+    [data?.length],
+  );
+
+  useEffect(() => {
     if (display?.isFocused) {
-      window.addEventListener('keyup', moveList);
-    } else {
-      window.removeEventListener('keyup', moveList);
+      window.addEventListener('keydown', handleMoveList, true);
+      return () => {
+        window.removeEventListener('keydown', handleMoveList, true);
+      };
     }
-    return () => {
-      window.removeEventListener('keyup', moveList);
-    };
-  }, [data?.length, display?.isFocused]);
+  }, [display?.isFocused, handleMoveList]);
+
+  useEffect(() => {
+    const currentItem = document.getElementById(`item-${isOnIndex}`);
+    currentItem?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [isOnIndex]);
+
+  useEffect(() => {
+    if (!display?.isFocused) {
+      setIsOnIndex(-1);
+    }
+  }, [display?.isFocused]);
 
   return (
     display?.isFocused && (
@@ -49,7 +67,7 @@ function List() {
           <li>검색어가 없습니다.</li>
         ) : (
           data?.map((el, idx) => (
-            <ListItem key={el.sickCd} data={el.sickNm} isOn={idx === isOnIndex} />
+            <ListItem key={el.sickCd} data={el.sickNm} isOn={idx === isOnIndex} idx={idx} />
           ))
         )}
       </ul>
