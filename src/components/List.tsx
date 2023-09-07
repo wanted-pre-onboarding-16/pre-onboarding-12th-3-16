@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useDiseasStore } from '../context/DiseaseStoreContext';
 import { useDisplay } from '../context/DisplayListContext';
 import ListItem from './ListItem';
@@ -12,6 +12,7 @@ function List() {
   const display = useDisplay();
   const data = useDiseasStore();
   const [isOnIndex, setIsOnIndex] = useState(0);
+  const ulRef = useRef<HTMLUListElement>(null);
 
   const handleMoveList = useCallback(
     (e: KeyboardEvent) => {
@@ -53,8 +54,11 @@ function List() {
   }, [display?.isFocused, handleMoveList]);
 
   useEffect(() => {
-    const currentItem = document.getElementById(`item-${isOnIndex}`);
-    currentItem?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    const ulElement = ulRef.current;
+    if (ulElement && isOnIndex >= 0 && isOnIndex < ulElement.children.length) {
+      const currentItem = ulElement.children[isOnIndex];
+      currentItem?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
   }, [isOnIndex]);
 
   useEffect(() => {
@@ -65,7 +69,7 @@ function List() {
 
   return (
     display?.isFocused && (
-      <ul>
+      <ul ref={ulRef}>
         {data?.length === 0 ? (
           <li>검색어가 없습니다.</li>
         ) : (
