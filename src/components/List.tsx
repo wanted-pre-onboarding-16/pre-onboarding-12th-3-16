@@ -6,10 +6,11 @@ import ListItem from './ListItem';
 function List() {
   const display = useDisplay();
   const data = useDiseasStore();
-  const [isOnIndex, setIsOnIndex] = useState(-2);
+  const [isOnIndex, setIsOnIndex] = useState(0);
   useEffect(() => {
     const moveList = (e: KeyboardEvent) => {
       e.stopPropagation();
+      e.preventDefault();
 
       switch (e.code) {
         case 'ArrowUp':
@@ -42,6 +43,17 @@ function List() {
     };
   }, [data?.length, display?.isFocused]);
 
+  useEffect(() => {
+    const currentItem = document.getElementById(`item-${isOnIndex}`);
+    currentItem?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [isOnIndex]);
+
+  useEffect(() => {
+    if (!display?.isFocused) {
+      setIsOnIndex(-2);
+    }
+  }, [display?.isFocused]);
+
   return (
     display?.isFocused && (
       <ul>
@@ -49,7 +61,7 @@ function List() {
           <li>검색어가 없습니다.</li>
         ) : (
           data?.map((el, idx) => (
-            <ListItem key={el.sickCd} data={el.sickNm} isOn={idx === isOnIndex} />
+            <ListItem key={el.sickCd} data={el.sickNm} isOn={idx === isOnIndex} idx={idx} />
           ))
         )}
       </ul>
