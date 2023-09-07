@@ -3,6 +3,8 @@ import { useDiseasStore } from '../context/DiseaseStoreContext';
 import { useDisplay } from '../context/DisplayListContext';
 import ListItem from './ListItem';
 
+let lastKeyPressedTime = 0;
+
 function List() {
   const display = useDisplay();
   const data = useDiseasStore();
@@ -10,6 +12,14 @@ function List() {
 
   const handleMoveList = useCallback(
     (e: KeyboardEvent) => {
+      const now = Date.now();
+
+      if (now - lastKeyPressedTime < 100) {
+        return;
+      }
+
+      lastKeyPressedTime = now;
+
       if (!['ArrowUp', 'ArrowDown'].includes(e.code)) return;
 
       e.stopPropagation();
@@ -46,7 +56,7 @@ function List() {
 
   useEffect(() => {
     if (!display?.isFocused) {
-      setIsOnIndex(-2);
+      setIsOnIndex(-1);
     }
   }, [display?.isFocused]);
 
