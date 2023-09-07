@@ -1,6 +1,6 @@
-import { useChangeDiseasStore } from '../context/DiseaseStoreContext';
-import { httpClient } from '../util/HttpClinet';
-import { query } from '../util/QueryCore';
+import { useChangeDiseasStore } from '../DiseaseStoreContext';
+import { httpClient } from '../../util/HttpClinet';
+import { query } from '../../util/QueryCore';
 
 function useInput() {
   const updateDisease = useChangeDiseasStore()?.updateDiseaStore;

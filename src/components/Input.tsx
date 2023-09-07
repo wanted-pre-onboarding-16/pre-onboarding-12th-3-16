@@ -1,35 +1,28 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 import { useDisplay } from '../context/DisplayListContext';
-import useInput from '../hook/useInput';
+import useInput from '../context/hook/useInput';
 
 function Input() {
-  const [isFocused, setIsFocused] = useState(false);
-  const targetRef = useDisplay()?.targetRef;
-
+  const inputRef = useRef<HTMLInputElement>(null);
   const onChangeValue = useInput()?.onChangeValue;
-
+  const isWriting = useDisplay()?.isWriting;
   const ApiTrigger = () => {
-    if (targetRef?.current && onChangeValue) onChangeValue(targetRef?.current.value);
+    if (inputRef.current && onChangeValue) {
+      onChangeValue(inputRef.current.value);
+    }
   };
-
-  // 포커스 이벤트 핸들러
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
-  // 블러(blur) 이벤트 핸들러
-  const handleBlur = () => {
-    setIsFocused(false);
+  const isFoucsInput = (e: React.FocusEvent<HTMLInputElement>) => {
+    isWriting && isWriting(e.type);
   };
 
   return (
     <div className="absolute top-20">
       <input
         className="w-[500px] px-3 py-3 rounded-md border border-teal-300 focus:outline-none focus:border-teal-500 shadow-md"
-        placeholder={isFocused ? '' : '🔍 질환명을 입력해주세요.'}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        ref={targetRef}
+        placeholder={isWriting ? '' : '🔍 질환명을 입력해주세요.'}
+        onFocus={isFoucsInput}
+        onBlur={isFoucsInput}
+        ref={inputRef}
         type="text"
         onChange={ApiTrigger}
       />
