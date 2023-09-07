@@ -3,6 +3,9 @@ import { useDiseasStore } from '../context/DiseaseStoreContext';
 import { useDisplay } from '../context/DisplayListContext';
 import ListItem from './ListItem';
 
+const DEBOUNCE_TIME_MS = 200;
+const INITIAL_INDEX = -1;
+
 let lastKeyPressedTime = 0;
 
 function List() {
@@ -14,7 +17,7 @@ function List() {
     (e: KeyboardEvent) => {
       const now = Date.now();
 
-      if (now - lastKeyPressedTime < 100) {
+      if (now - lastKeyPressedTime < DEBOUNCE_TIME_MS) {
         return;
       }
 
@@ -56,7 +59,7 @@ function List() {
 
   useEffect(() => {
     if (!display?.isFocused) {
-      setIsOnIndex(-1);
+      setIsOnIndex(INITIAL_INDEX);
     }
   }, [display?.isFocused]);
 
