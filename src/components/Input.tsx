@@ -1,5 +1,5 @@
 import { useDisplay } from '../context/DisplayListContext';
-import useInput from '../hook/useInput';
+import useInput from '../context/hook/useInput';
 
 function Input() {
   const targetRef = useDisplay()?.targetRef;
