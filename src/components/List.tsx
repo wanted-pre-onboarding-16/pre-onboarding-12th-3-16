@@ -10,7 +10,9 @@ function List() {
   useEffect(() => {
     const moveList = (e: KeyboardEvent) => {
       e.stopPropagation();
-      e.preventDefault();
+      if (e.code === 'ArrowUp' || e.code === 'ArrowDown') {
+        e.preventDefault();
+      }
 
       switch (e.code) {
         case 'ArrowUp':
@@ -34,12 +36,12 @@ function List() {
     };
 
     if (display?.isFocused) {
-      window.addEventListener('keyup', moveList);
+      window.addEventListener('keydown', moveList, true);
     } else {
-      window.removeEventListener('keyup', moveList);
+      window.removeEventListener('keydown', moveList, true);
     }
     return () => {
-      window.removeEventListener('keyup', moveList);
+      window.removeEventListener('keydown', moveList, true);
     };
   }, [data?.length, display?.isFocused]);
 
