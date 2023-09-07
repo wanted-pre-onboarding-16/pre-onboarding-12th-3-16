@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useDiseasStore } from '../context/DiseaseStoreContext';
 import { useDisplay } from '../context/DisplayListContext';
 import ListItem from './ListItem';
@@ -7,43 +7,37 @@ function List() {
   const display = useDisplay();
   const data = useDiseasStore();
   const [isOnIndex, setIsOnIndex] = useState(0);
-  useEffect(() => {
-    const moveList = (e: KeyboardEvent) => {
+
+  const handleMoveList = useCallback(
+    (e: KeyboardEvent) => {
+      if (!['ArrowUp', 'ArrowDown'].includes(e.code)) return;
+
       e.stopPropagation();
-      if (e.code === 'ArrowUp' || e.code === 'ArrowDown') {
-        e.preventDefault();
-      }
+      e.preventDefault();
 
-      switch (e.code) {
-        case 'ArrowUp':
-          setIsOnIndex(pre => {
-            if (pre <= 0) return (pre = 0);
-            else pre -= 1;
-            return pre;
-          });
-          break;
-        case 'ArrowDown':
-          setIsOnIndex(pre => {
-            if (!data?.length) return pre;
-            if (pre === data?.length - 1) return pre;
-            else pre += 1;
-            return pre;
-          });
-          break;
-        default:
-          return;
-      }
-    };
+      setIsOnIndex(prev => {
+        if (e.code === 'ArrowUp') {
+          return Math.max(prev - 1, 0);
+        }
 
+        if (e.code === 'ArrowDown' && data?.length) {
+          return Math.min(prev + 1, data.length - 1);
+        }
+
+        return prev;
+      });
+    },
+    [data?.length],
+  );
+
+  useEffect(() => {
     if (display?.isFocused) {
-      window.addEventListener('keydown', moveList, true);
-    } else {
-      window.removeEventListener('keydown', moveList, true);
+      window.addEventListener('keydown', handleMoveList, true);
+      return () => {
+        window.removeEventListener('keydown', handleMoveList, true);
+      };
     }
-    return () => {
-      window.removeEventListener('keydown', moveList, true);
-    };
-  }, [data?.length, display?.isFocused]);
+  }, [display?.isFocused, handleMoveList]);
 
   useEffect(() => {
     const currentItem = document.getElementById(`item-${isOnIndex}`);
