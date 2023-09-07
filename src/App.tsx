@@ -5,7 +5,7 @@ import { DisplayProvider } from './context/DisplayListContext';
 
 function App() {
   return (
-    <div className="max-w-[1024px] mx-auto mt-10 bg-slate-400 flex justify-center items-center flex-col ">
+    <div className="h-screen w-screen relative flex flex-col items-center bg-gray-200">
       <DisplayProvider>
         <DiseasStoreProvider>
           <Input />
