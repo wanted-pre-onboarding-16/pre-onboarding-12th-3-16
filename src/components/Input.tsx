@@ -19,7 +19,7 @@ function Input() {
     <div className="absolute top-20">
       <input
         className="w-[500px] px-3 py-3 rounded-md border border-teal-300 focus:outline-none focus:border-teal-500 shadow-md"
-        placeholder={isWriting ? '' : '🔍 질환명을 입력해주세요.'}
+        placeholder={isWriting ? '🔍 질환명을 입력해주세요.' : ''}
         onFocus={isFoucsInput}
         onBlur={isFoucsInput}
         ref={inputRef}

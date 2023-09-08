@@ -1,4 +1,3 @@
-// useListNavigation.ts
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const DEBOUNCE_TIME_MS = 200;
@@ -58,7 +57,6 @@ function useListNavigation(dataLength: number, isFocused: boolean) {
   }, [isOnIndex]);
 
   useEffect(() => {
-    console.log(isFocused);
     if (!isFocused || dataLength === 0) {
       setIsOnIndex(INITIAL_INDEX);
     }
