@@ -20,6 +20,9 @@
 
 [🔗 배포링크](https://pre-onboarding-12th-3-16.vercel.app/)
 
+**API서버가 Json-server+Vercel로 이루어져있어 간혹 데이터를 가져오지 못하는 경우가 있습니다.**</br>
+**그런 경우에는 새로고침을 한번 해주시면 감사하겠습니다.**
+
 ## 5. 프로젝트 구조
 
 <img width="267" alt="스크린샷 2023-09-08 오전 10 24 32" src="https://github.com/wanted-pre-onboarding-16/pre-onboarding-12th-2-16/assets/119836116/de16557c-cbf8-47fe-bb84-6c699f9e6635">
