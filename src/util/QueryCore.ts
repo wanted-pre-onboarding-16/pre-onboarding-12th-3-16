@@ -30,14 +30,14 @@ class QueryCore {
       await caches.open(this.#staleTime).then(cache => cache.delete(this.#baseQuery + inputText));
     }, deleteCacheTime - currentTime);
   }
-  // 유효기간 스테일이 만료되었을 때 재 요청
+
   async reRequest(inputText: string) {
     const result = await this.getHttpRequest.get(inputText);
     await this.addCache(inputText, result);
     await this.addStale(inputText, result);
     return result.data;
   }
-  // caching 값 확인
+
   async cacheHit(inputText: string) {
     const result = await caches
       .open(this.#diseaseCache)
@@ -49,7 +49,7 @@ class QueryCore {
       });
     return result;
   }
-  // stale 값 확인
+
   async cacheStale(inputText: string) {
     const result = await caches
       .open(this.#staleTime)
@@ -61,7 +61,7 @@ class QueryCore {
       });
     return result;
   }
-  // 첫 캐치 등록
+
   async addCache(inputText: string, response: AxiosResponse) {
     const convertAxiosResponseToFatch = new Response(JSON.stringify(response.data), {
       status: response.status,
@@ -72,7 +72,7 @@ class QueryCore {
       .open(this.#diseaseCache)
       .then(cache => cache.put(this.#baseQuery + inputText, convertAxiosResponseToFatch));
   }
-  // 삭제할 스테일 등록
+
   async addCacheTime(inputText: string, response: AxiosResponse) {
     const deleteCacheTime = Date.now() + this.#deleteCacheTime * this.#millisecond;
     const cacheTime = new Response(JSON.stringify(deleteCacheTime), {
@@ -85,7 +85,7 @@ class QueryCore {
       .then(cache => cache.put(this.#baseQuery + inputText, cacheTime));
     return this.deleteCacheTimer(inputText, deleteCacheTime);
   }
-  // 유효성 스테일 등록
+
   async addStale(inputText: string, response: AxiosResponse) {
     const staleTime = Date.now() + this.#staleCacheTime * this.#millisecond;
 
