@@ -16,4 +16,4 @@ class HttpClient implements THttpClient {
   }
 }
 
-export const httpClient = new HttpClient('http://localhost:4000/sick?q=');
+export const httpClient = new HttpClient('https://json-server-vercel-silk.vercel.app/sick?q=');
